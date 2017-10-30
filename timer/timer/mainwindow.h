@@ -19,9 +19,14 @@ public:
 private:
     QLabel *** labels;
     Ui::MainWindow *ui;
+    int positionX = 0;
+    int positionY = 0;
 
 private slots:
     void dibujarArtefacto();
+
+public slots:
+    void keyPressEvent(QKeyEvent * e);
 
 };
 

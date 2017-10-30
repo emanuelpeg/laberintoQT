@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QTimer>
 #include <QMessageBox>
+#include <QKeyEvent>
 
 void cambiarA0(int ** matriz)
 {
@@ -140,7 +141,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     bool enX = rand() % 2;
 
-    while (zerosArea < (Allzeros)) {
+    while (zerosArea < (Allzeros-50)) {
 
         if (enX) {
             proximaPuertaX = construirPuertaX(proximaPuertaX, proximaPuertaY, matriz, derecha);
@@ -173,34 +174,36 @@ MainWindow::MainWindow(QWidget *parent) :
         this->labels[i] = new QLabel*[50];
         for (int j = 0; j < 50; j++) {
 
-            if (matriz[i][j] == 0) {
                 this->labels[i][j] = new QLabel();
                 this->labels[i][j]->setBackgroundRole(QPalette::Dark);
                 this->labels[i][j]->setScaledContents(true);
 
-//                QPixmap pix("/home/emanuel/Escritorio/piso.png");
-//                myimage->setPixmap(pix);
-
+                this->labels[i][j]->setFixedSize(15,15);
+                this->labels[i][j]->setText(" ");
                 this->ui->gridLayout->addWidget(labels[i][j] ,i,j);
-            } else {
-                this->labels[i][j] = new QLabel();
-                this->labels[i][j]->setBackgroundRole(QPalette::Dark);
-                this->labels[i][j]->setScaledContents(true);
-
-                QPixmap pix("/home/emanuel/Escritorio/wall2.png");
-                this->labels[i][j]->setPixmap(pix);
-
-                this->ui->gridLayout->addWidget(this->labels[i][j] ,i,j);
-            }
-
         }
 
     }
 
+    for (int i = 0; i < 50; i++) {
+        for (int j = 0; j < 50; j++) {
+            if (matriz[i][j] != 0) {
+                QPixmap pix("/home/emanuel/Escritorio/wall2.png");
+
+                // set a scaled pixmap to a w x h window keeping its aspect ratio
+                pix = pix.scaled(15,15,Qt::KeepAspectRatio);
+                this->labels[i][j]->setPixmap(pix);
+            } else {
+
+            }
+        }
+     }
+
     //this->showFullScreen();
-    QLabel *myimage = this->labels[0][0];
+    QLabel *myimage = this->labels[positionX][positionY];
+
     QPixmap pix("/home/emanuel/Escritorio/personaje.png");
-    myimage->setPixmap(pix);
+    myimage->setPixmap(pix.scaled(15,15,Qt::KeepAspectRatio));
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(dibujarArtefacto()));
@@ -214,10 +217,61 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::dibujarArtefacto() {
-    QMessageBox::warning(this, tr("Hola!!"),
-                                       "Hola!!",
-                                       QMessageBox::Ok  ,
-                                       QMessageBox::Ok);
+    int x = rand() % 50;
+    int y = rand() % 50;
+    QLabel *myimage = this->labels[x][y];
+
+    QPixmap pix("/home/emanuel/Escritorio/piso.png");
+    myimage->setPixmap(pix.scaled(15,15,Qt::KeepAspectRatio));
+
+//    QMessageBox::warning(this, tr("Hola!!"),
+//                                       "x = " + QString::number(x)+ " , Y = " + QString::number(y),
+//                                       QMessageBox::Ok  ,
+//                                       QMessageBox::Ok);
 
 
+}
+
+
+void MainWindow::keyPressEvent(QKeyEvent *e) {
+    if(e->key() == Qt::Key_Left ) {
+        if (positionY>0) {
+            QLabel *myimage = this->labels[positionX][positionY];
+            myimage->clear();
+            positionY--;
+            myimage = this->labels[positionX][positionY];
+            QPixmap pix("/home/emanuel/Escritorio/personaje.png");
+            myimage->setPixmap(pix.scaled(15,15,Qt::KeepAspectRatio));
+        }
+    }
+    if(e->key() == Qt::Key_Right) {
+        if (positionY<49) {
+            QLabel *myimage = this->labels[positionX][positionY];
+            myimage->clear();
+            positionY++;
+            myimage = this->labels[positionX][positionY];
+            QPixmap pix("/home/emanuel/Escritorio/personaje.png");
+            myimage->setPixmap(pix.scaled(15,15,Qt::KeepAspectRatio));
+        }
+    }
+    if(e->key() == Qt::Key_Up ) {
+        if (positionX>0) {
+            QLabel *myimage = this->labels[positionX][positionY];
+            myimage->clear();
+            positionX--;
+            myimage = this->labels[positionX][positionY];
+            QPixmap pix("/home/emanuel/Escritorio/personaje.png");
+            myimage->setPixmap(pix.scaled(15,15,Qt::KeepAspectRatio));
+        }
+    }
+    if(e->key() == Qt::Key_Down) {
+        if (positionX<49) {
+            QLabel *myimage = this->labels[positionX][positionY];
+            myimage->clear();
+            positionX++;
+            myimage = this->labels[positionX][positionY];
+            QPixmap pix("/home/emanuel/Escritorio/personaje.png");
+            myimage->setPixmap(pix.scaled(15,15,Qt::KeepAspectRatio));
+        }
+    }
 }
